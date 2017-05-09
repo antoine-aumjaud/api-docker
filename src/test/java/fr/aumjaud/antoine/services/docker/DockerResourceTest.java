@@ -2,11 +2,15 @@
 package fr.aumjaud.antoine.services.docker;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.aumjaud.antoine.services.docker.DockerResource;
 import fr.aumjaud.antoine.services.docker.model.DockerPushData;
+import static org.junit.Assert.*;
 
 public class DockerResourceTest {
+
 	private DockerResource DockerResource = new DockerResource();
 
 	@Test
@@ -23,6 +27,8 @@ public class DockerResourceTest {
 		DockerPushData dpd = DockerResource.getData(request);
 		
 		//Then
-		System.out.println(dpd.getRepository().getName());
+		assertNotNull(dpd.getRepository());
+		assertEquals("testhook", dpd.getRepository().getName());
+		assertEquals("svendowideit/testhook", dpd.getRepository().getRepoName());
 	}
 }
