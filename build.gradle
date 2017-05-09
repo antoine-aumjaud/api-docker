@@ -1,0 +1,23 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+
+mainClassName = 'fr.aumjaud.antoine.services.synology.chatbot.LaunchServer'
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile 'com.sparkjava:spark-core:2.2'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.6.2'
+    compile 'com.spotify:docker-client:8.4.0'
+}
+
+jar {
+    baseName = 'api-synology-chatbot'
+    version =  '0.0.1'
+}
