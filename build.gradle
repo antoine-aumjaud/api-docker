@@ -18,11 +18,13 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.spotify:docker-client:8.4.0'
     testCompile 'junit:junit:4.12'
-        testCompile 'junit:junit:4.12'
     runtime 'ch.qos.logback:logback-classic:1.2.3'
 }
 
 jar {
     baseName = 'api-docker'
     version =  '0.0.1'
+    manifest {
+        attributes 'Main-Class': 'fr.aumjaud.antoine.services.docker.LaunchServer'
+    }
 }
