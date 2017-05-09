@@ -5,11 +5,10 @@ VOLUME /home/app/conf
 VOLUME /var/run/docker.sock
 EXPOSE 9080
 
+RUN useradd -ms /bin/bash app
 USER app
 ENV HOME /home/app
 WORKDIR /home/app
-
-RUN useradd -ms /bin/bash app
 COPY build/libs/*.jar executablejar.jar
 
 CMD java -cp .:conf -jar executablejar.jar
