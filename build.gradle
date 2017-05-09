@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'application'
 
-mainClassName = 'fr.aumjaud.antoine.services.synology.chatbot.LaunchServer'
+mainClassName = 'fr.aumjaud.antoine.services.docker.LaunchServer'
 
 repositories {
     mavenCentral()
@@ -13,11 +13,12 @@ targetCompatibility = 1.8
 
 dependencies {
     compile 'com.sparkjava:spark-core:2.2'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.6.2'
+    compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.spotify:docker-client:8.4.0'
+    testCompile 'junit:junit:4.12'
 }
 
 jar {
-    baseName = 'api-synology-chatbot'
+    baseName = 'api-docker'
     version =  '0.0.1'
 }

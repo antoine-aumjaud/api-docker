@@ -11,7 +11,7 @@ public class LaunchServer {
 
         get("/hi", (request, response) -> "hello");
         
-        DockerResource botResource = new DockerResource();
-        post("/webhook", "application/json", DockerResource::webhook);
+        DockerResource dockerResource = new DockerResource();
+        post("/webhook", "application/json", dockerResource::webhook);
     }
 }
