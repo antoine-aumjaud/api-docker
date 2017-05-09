@@ -24,7 +24,8 @@ dependencies {
 jar {
     baseName = 'api-docker'
     version =  '0.0.1'
-    manifest {
-        attributes 'Main-Class': 'fr.aumjaud.antoine.services.docker.LaunchServer'
-    }
+}
+
+startScripts {
+    classpath += files('src/dist/lib/conf')
 }
