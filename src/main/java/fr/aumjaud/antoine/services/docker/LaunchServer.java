@@ -15,6 +15,7 @@ import static spark.Spark.port;
 public class LaunchServer {
 
 	private static Logger logger = LoggerFactory.getLogger(DockerResource.class);
+	private static String CONFIG_FILENAME = "api-docker.properties";
 
 	public static void main(String... args) {
 		Properties properties = loadProperties();
@@ -27,7 +28,9 @@ public class LaunchServer {
 	}
 
 	private static Properties loadProperties() {
-		try (InputStream is = DockerResource.class.getClassLoader().getResourceAsStream("/api-docker.properties")) {
+		try (InputStream is = LaunchServer.class.getClassLoader().getResourceAsStream(CONFIG_FILENAME)) {
+			if (is == null)
+				throw new IllegalStateException("No config file in classpath: " + CONFIG_FILENAME);
 			Properties p = new Properties();
 			p.load(is);
 			return p;
