@@ -2,16 +2,38 @@ package fr.aumjaud.antoine.services.docker;
 
 import static spark.Spark.get;
 import static spark.Spark.post;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static spark.Spark.port;
 
 public class LaunchServer {
-	
-    public static void main(String... args) {
-        port(9080); 
 
-        get("/hi", (request, response) -> "hello");
-        
-        DockerResource dockerResource = new DockerResource();
-        post("/", "application/json", dockerResource::webhook);
-    }
+	private static Logger logger = LoggerFactory.getLogger(DockerResource.class);
+
+	public static void main(String... args) {
+		Properties properties = loadProperties();
+		DockerResource dockerResource = new DockerResource(properties);
+
+		port(9080);
+		get("/hi", (request, response) -> "hello");
+
+		post("/", "application/json", dockerResource::webhook);
+	}
+
+	private static Properties loadProperties() {
+		try (InputStream is = DockerResource.class.getClassLoader().getResourceAsStream("/api-docker.properties")) {
+			Properties p = new Properties();
+			p.load(is);
+			return p;
+		} catch (IOException e) {
+			logger.error("Can't load properties", e);
+			return null;
+		}
+	}
 }

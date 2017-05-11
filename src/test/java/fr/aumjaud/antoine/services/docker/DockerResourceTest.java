@@ -1,34 +1,80 @@
 
 package fr.aumjaud.antoine.services.docker;
 
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import fr.aumjaud.antoine.services.docker.DockerResource;
+import java.util.Properties;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import fr.aumjaud.antoine.services.docker.model.DockerPushData;
-import static org.junit.Assert.*;
 
 public class DockerResourceTest {
 
-	private DockerResource DockerResource = new DockerResource();
+	private Properties properties = new Properties();
+	private DockerResource DockerResource = new DockerResource(properties);
+
+	@Before
+	public void init() {
+		properties.clear();
+	}
 
 	@Test
-	public void should_parse_an_docker_webhook_info() {
-		//Given
+	public void getData_should_parse_an_docker_webhook_info() {
+		// Given
 		String msg = "{  \"callback_url\": \"https://registry.hub.docker.com/u/svendowideit/testhook/hook/2141b5bi5i5b02bec211i4eeih0242eg11000a/\",  \"push_data\": {    \"images\": [        \"27d47432a69bca5f2700e4dff7de0388ed65f9d3fb1ec645e2bc24c223dc1cc3\",        \"51a9c7c1f8bb2fa19bcd09789a34e63f35abb80044bc10196e304f6634cc582c\",        \"...\"    ],    \"pushed_at\": 1.417566161e+09,    \"pusher\": \"trustedbuilder\"  },  \"repository\": {    \"comment_count\": \"0\",    \"date_created\": 1.417494799e+09,    \"description\": \"\",    \"dockerfile\": \"\",    \"full_description\": \"Docker Hub based automated build from a GitHub repo\",    \"is_official\": false,    \"is_private\": true,    \"is_trusted\": true,    \"name\": \"testhook\",    \"namespace\": \"svendowideit\",    \"owner\": \"svendowideit\",    \"repo_name\": \"svendowideit/testhook\",    \"repo_url\": \"https://registry.hub.docker.com/u/svendowideit/testhook/\",    \"star_count\": 0,    \"status\": \"Active\"  }}";
 		spark.Request request = new spark.Request() {
 			public String body() {
 				return msg;
 			}
 		};
-		
-		//When
+
+		// When
 		DockerPushData dpd = DockerResource.getData(request);
-		
-		//Then
+
+		// Then
 		assertNotNull(dpd.getRepository());
 		assertEquals("testhook", dpd.getRepository().getName());
 		assertEquals("svendowideit/testhook", dpd.getRepository().getRepoName());
 	}
+
+	@Test
+	public void getCommand_should_get_container_command_if_exists() {
+		// Given
+		properties.put("containerId.command.mycommand", "OK");
+		properties.put("common.command.mycommand", "KO");
+
+		// When
+		String command = DockerResource.getCommand("mycommand", null, "containerId");
+
+		// Then
+		assertEquals("OK", command);
+	}
+
+	@Test
+	public void getCommand_should_get_common_command_if_container_command_does_not_exist() {
+		// Given
+		properties.put("common.command.mycommand", "OK");
+
+		// When
+		String command = DockerResource.getCommand("mycommand", null, "containerId");
+
+		// Then
+		assertEquals("OK", command);
+	}
+
+	@Test
+	public void getCommand_should_filter_the_command_with_parameters() {
+		// Given
+		properties.put("common.command.mycommand", "${imageId}-${containerId}");
+
+		// When
+		String command = DockerResource.getCommand("mycommand", "aa", "bb");
+
+		// Then
+		assertEquals("aa-bb", command);
+	}
+
 }
