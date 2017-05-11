@@ -14,7 +14,7 @@ import static spark.Spark.port;
 
 public class LaunchServer {
 
-	private static Logger logger = LoggerFactory.getLogger(DockerResource.class);
+	private static Logger logger = LoggerFactory.getLogger(LaunchServer.class);
 	private static String CONFIG_FILENAME = "api-docker.properties";
 
 	public static void main(String... args) {
