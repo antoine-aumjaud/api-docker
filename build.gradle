@@ -17,7 +17,7 @@ dependencies {
 	}
     compile 'com.google.code.gson:gson:2.8.0'
     testCompile 'junit:junit:4.12'
-    runtime 'ch.qos.logback:logback-classic:1.2.3'
+    compile 'ch.qos.logback:logback-classic:1.2.3' //compile for slf4j
 }
 
 jar {
