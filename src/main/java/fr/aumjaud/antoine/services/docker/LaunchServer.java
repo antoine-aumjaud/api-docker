@@ -25,6 +25,7 @@ public class LaunchServer {
 		get("/hi", (request, response) -> "hello");
 
 		post("/", "application/json", dockerResource::webhook);
+		
 	}
 
 	private static Properties loadProperties() {
@@ -33,6 +34,7 @@ public class LaunchServer {
 				throw new IllegalStateException("No config file in classpath: " + CONFIG_FILENAME);
 			Properties p = new Properties();
 			p.load(is);
+			logger.info(CONFIG_FILENAME + " loaded");
 			return p;
 		} catch (IOException e) {
 			logger.error("Can't load properties", e);
