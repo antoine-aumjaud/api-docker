@@ -1,5 +1,7 @@
-<configuration>
+<configuration scan="true" scanPeriod="30 seconds">
 
+	<shutdownHook/>
+ 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/api-docker.txt</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -13,7 +15,9 @@
         </encoder>
     </appender>
 
-    <root level="info" additivity="false">
+	<logger name="fr.aumjaud.antoine" level="DEBUG"/>
+
+    <root level="INFO" additivity="false">
         <appender-ref ref="FILE"/>
     </root>
 

@@ -28,3 +28,10 @@ jar {
 startScripts {
     classpath += files('src/dist/lib/conf')
 }
+
+//run add src/dist/lib/conf
+//filter
+//application_name=@application_name@
+//version=@version@
+
+
