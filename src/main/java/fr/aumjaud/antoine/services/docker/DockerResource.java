@@ -17,6 +17,7 @@ import fr.aumjaud.antoine.services.docker.model.DockerPushData;
 import fr.aumjaud.antoine.services.docker.model.DockerRepository;
 import spark.Request;
 import spark.Response;
+import static spark.Spark.halt;
 
 public class DockerResource {
 	private static Logger logger = LoggerFactory.getLogger(DockerResource.class);
@@ -37,6 +38,12 @@ public class DockerResource {
 	 * Manage webhook from dockerhub
 	 */
 	public String webhook(Request request, Response response) {
+		String secureKey = request.queryParams("secure-key");
+		if(!properties.get("secure-key").equals(secureKey)) {
+			halt(401, "error incorrect tocken");
+			logger.error("Try to access to deployment with key: " + secureKey);
+			return "";
+		}
 
 		try {
 			DockerRepository dockerRepository = getData(request).getRepository();
@@ -47,12 +54,12 @@ public class DockerResource {
 			execute(getCommand("stop", imageId, containerId));
 			execute(getCommand("remove", imageId, containerId));
 			execute(getCommand("start", imageId, containerId));
-
 			return "ok";
 
 		} catch (RuntimeException | IOException e) {
 			logger.error(e.getMessage(), e);
-			return "error";
+			response.status(500);
+			return "error, see logs";
 		}
 	}
 
