@@ -31,6 +31,9 @@ package fr.aumjaud.antoine.services.docker.model;
     "status": "Active"
   }
 }
+
+{"push_data": {"pushed_at": 1494801991, "images": [], "tag": "latest", "pusher": "antoineaumjaud"}, "callback_url": "https://registry.hub.docker.com/u/antoineaumjaud/api-synology-chatbot/hook/2j1gahegc4bij42jjfj0c0daeg0ddeccc/", "repository": {"status": "Active", "description": "API - Synology - Chatbot", "is_trusted": false, "full_description": "Sources : https://github.com/antoine-aumjaud/api-synology-chatbot\n\nTravis Build : [![Build Status](https://travis-ci.org/antoine-aumjaud/api-synology-chatbot.svg?branch=master)](https://travis-ci.org/antoine-aumjaud/api-synology-chatbot)", "repo_url": "https://hub.docker.com/r/antoineaumjaud/api-synology-chatbot", "owner": "antoineaumjaud", "is_official": false, "is_private": false, "name": "api-synology-chatbot", "namespace": "antoineaumjaud", "star_count": 0, "comment_count": 0, "date_created": 1494312700, "repo_name": "antoineaumjaud/api-synology-chatbot"}}
+
  */
 public class DockerPushData {
 	private DockerRepository repository;

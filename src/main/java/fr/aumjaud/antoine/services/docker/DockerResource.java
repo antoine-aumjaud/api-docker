@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -38,18 +39,34 @@ public class DockerResource {
 	 * Manage webhook from dockerhub
 	 */
 	public String webhook(Request request, Response response) {
+		// Check post data
+		DockerPushData dockerPushData = getData(request);
+		if (dockerPushData == null) {
+			halt(401, "error: incorrect POST data");
+			logger.error("Try to access to deployment with no parsable POST data");
+			return "";
+		}
+		// Check secure token
 		String secureKey = request.queryParams("secure-key");
-		if(!properties.get("secure-key").equals(secureKey)) {
-			halt(401, "error incorrect tocken");
+		if (!properties.getProperty("secure-key").equals(secureKey)) {
+			halt(401, "error: incorrect secure token");
 			logger.error("Try to access to deployment with key: " + secureKey);
 			return "";
 		}
 
-		try {
-			DockerRepository dockerRepository = getData(request).getRepository();
-			String imageId = dockerRepository.getRepoName();
-			String containerId = dockerRepository.getName();
+		DockerRepository dockerRepository = dockerPushData.getRepository();
+		String imageId = dockerRepository.getRepoName();
+		String containerId = dockerRepository.getName();
 
+		// Check image owner
+		if (!imageId.startsWith(properties.getProperty("docker-owner"))) {
+			halt(401, "error: incorrect access");
+			logger.error("Try to access to deployment with not valid image: " + imageId);
+			return "";
+		}
+
+		// Process execution
+		try {
 			execute(getCommand("pull", imageId, containerId));
 			execute(getCommand("stop", imageId, containerId));
 			execute(getCommand("remove", imageId, containerId));
@@ -91,12 +108,12 @@ public class DockerResource {
 	 * @param command the command to execute
 	 * @throws IOException if there is an error during execution
 	 */
-	private void execute(String command) throws IOException {
-		Process p = new ProcessBuilder().command(command).redirectErrorStream(true).start();
+	boolean execute(String command) throws IOException {
+		Process p = new ProcessBuilder().command(command.split(" ")).redirectErrorStream(true).start();
 
 		try (BufferedReader outReader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
 			logger.debug(String.join(System.lineSeparator(), outReader.lines().collect(Collectors.toList())));
-			p.wait(Integer.parseInt(properties.getProperty("process.timeout", "30")));
+			return p.waitFor(Long.parseLong(properties.getProperty("process.timeout", "30")), TimeUnit.SECONDS);
 
 		} catch (IOException | InterruptedException e) {
 			throw new IOException("Can't execute process");

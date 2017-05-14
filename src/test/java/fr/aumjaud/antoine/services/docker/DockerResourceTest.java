@@ -3,7 +3,9 @@ package fr.aumjaud.antoine.services.docker;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import org.junit.Before;
@@ -14,7 +16,7 @@ import fr.aumjaud.antoine.services.docker.model.DockerPushData;
 public class DockerResourceTest {
 
 	private Properties properties = new Properties();
-	private DockerResource DockerResource = new DockerResource(properties);
+	private DockerResource dockerResource = new DockerResource(properties);
 
 	@Before
 	public void init() {
@@ -32,7 +34,7 @@ public class DockerResourceTest {
 		};
 
 		// When
-		DockerPushData dpd = DockerResource.getData(request);
+		DockerPushData dpd = dockerResource.getData(request);
 
 		// Then
 		assertNotNull(dpd.getRepository());
@@ -47,7 +49,7 @@ public class DockerResourceTest {
 		properties.put("common.command.mycommand", "KO");
 
 		// When
-		String command = DockerResource.getCommand("mycommand", null, "containerId");
+		String command = dockerResource.getCommand("mycommand", null, "containerId");
 
 		// Then
 		assertEquals("OK", command);
@@ -59,7 +61,7 @@ public class DockerResourceTest {
 		properties.put("common.command.mycommand", "OK");
 
 		// When
-		String command = DockerResource.getCommand("mycommand", null, "containerId");
+		String command = dockerResource.getCommand("mycommand", null, "containerId");
 
 		// Then
 		assertEquals("OK", command);
@@ -71,10 +73,22 @@ public class DockerResourceTest {
 		properties.put("common.command.mycommand", "${imageId}-${containerId}");
 
 		// When
-		String command = DockerResource.getCommand("mycommand", "aa", "bb");
+		String command = dockerResource.getCommand("mycommand", "aa", "bb");
 
 		// Then
 		assertEquals("aa-bb", command);
+	}
+
+	@Test
+	public void execute_should_execute_a_command() throws IOException {
+		// Given
+		String command = "docker ps -a";
+
+		// When
+		boolean res = dockerResource.execute(command);
+
+		// Then
+		assertTrue(res);
 	}
 
 }
