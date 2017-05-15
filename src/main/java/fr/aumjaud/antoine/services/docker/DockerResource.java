@@ -99,7 +99,7 @@ public class DockerResource {
 			command = properties.getProperty("common.command." + commandType);
 		}
 		if (command == null) {
-			throw new RuntimeException("Command " + commandType + " not found");
+			throw new RuntimeException("Command '" + commandType + "' not found for " + containerId);
 		}
 		return command.replaceAll("\\$\\{imageId\\}", imageId).replaceAll("\\$\\{containerId\\}", containerId);
 	}
