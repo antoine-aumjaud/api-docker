@@ -27,12 +27,22 @@ public class DockerResource {
 	private Gson gson;
 
 	public DockerResource(Properties properties) {
-		this.properties = properties;
+		setConfig(properties);
 
 		GsonBuilder builder = new GsonBuilder();
 		builder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
 
 		gson = builder.create();
+	}
+
+	/**
+	 * Set config 
+	 * @param properties the config to set
+	 * @return true if config set successfully
+	 */
+	public boolean setConfig(Properties properties) {
+		this.properties = properties;
+		return true;
 	}
 
 	/**
@@ -123,11 +133,6 @@ public class DockerResource {
 			throw new IOException("Can't execute process");
 		}
 
-	}
-
-	public boolean setConfig(Properties properties) {
-		this.properties = properties;
-		return true;
 	}
 
 }
