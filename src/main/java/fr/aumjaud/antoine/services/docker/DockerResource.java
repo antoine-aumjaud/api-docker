@@ -67,9 +67,10 @@ public class DockerResource {
 
 		// Process execution
 		try {
-			execute(getCommand("pull", imageId, containerId));
 			execute(getCommand("stop", imageId, containerId));
-			execute(getCommand("remove", imageId, containerId));
+			execute(getCommand("rm", imageId, containerId));
+			execute(getCommand("rmi", imageId, containerId));
+			execute(getCommand("pull", imageId, containerId));
 			execute(getCommand("start", imageId, containerId));
 			return "ok";
 
@@ -98,7 +99,7 @@ public class DockerResource {
 			command = properties.getProperty("common.command." + commandType);
 		}
 		if (command == null) {
-			throw new RuntimeException("Command " + commandType + "not found");
+			throw new RuntimeException("Command " + commandType + " not found");
 		}
 		return command.replaceAll("\\$\\{imageId\\}", imageId).replaceAll("\\$\\{containerId\\}", containerId);
 	}
@@ -109,15 +110,19 @@ public class DockerResource {
 	 * @throws IOException if there is an error during execution
 	 */
 	boolean execute(String command) throws IOException {
+		logger.info("Execute command: {}", command);
+		boolean exitValue = false;
 		Process p = new ProcessBuilder().command(command.split(" ")).redirectErrorStream(true).start();
 
 		try (BufferedReader outReader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
 			logger.debug(String.join(System.lineSeparator(), outReader.lines().collect(Collectors.toList())));
-			return p.waitFor(Long.parseLong(properties.getProperty("process.timeout", "30")), TimeUnit.SECONDS);
-
+			exitValue = p.waitFor(Long.parseLong(properties.getProperty("process.timeout", "30")), TimeUnit.SECONDS);
+			logger.info("Command executed, result: {}", exitValue);
+			return exitValue;
 		} catch (IOException | InterruptedException e) {
 			throw new IOException("Can't execute process");
 		}
+
 	}
 
 }
