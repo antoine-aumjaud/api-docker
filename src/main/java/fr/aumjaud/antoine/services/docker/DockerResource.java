@@ -125,4 +125,9 @@ public class DockerResource {
 
 	}
 
+	public boolean setConfig(Properties properties) {
+		this.properties = properties;
+		return true;
+	}
+
 }

@@ -24,7 +24,9 @@ public class LaunchServer {
 		get("/hi", (request, response) -> technicalResource.hi());
 		get("/info", (request, response) -> technicalResource.info());
 
-		post("/", "application/json", dockerResource::webhook);
+		get("/reloadConfig", (request, response) -> dockerResource.setConfig(propertyHelper.loadProperties(APP_CONFIG_FILENAME)));
+		
+		post("/docker-webhook/", "application/json", dockerResource::webhook);
 	}
 
 }
