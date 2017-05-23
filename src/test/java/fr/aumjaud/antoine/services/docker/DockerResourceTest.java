@@ -15,12 +15,13 @@ import fr.aumjaud.antoine.services.docker.model.DockerPushData;
 
 public class DockerResourceTest {
 
-	private Properties properties = new Properties();
-	private DockerResource dockerResource = new DockerResource(properties);
+	private Properties properties;
+	private DockerResource dockerResource = new DockerResource();
 
 	@Before
 	public void init() {
-		properties.clear();
+		properties = new Properties();
+		dockerResource.setConfig(properties);
 	}
 
 	@Test

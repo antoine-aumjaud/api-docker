@@ -14,11 +14,12 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import fr.aumjaud.antoine.services.common.security.NoAccessException;
+import fr.aumjaud.antoine.services.common.security.WrongRequestException;
 import fr.aumjaud.antoine.services.docker.model.DockerPushData;
 import fr.aumjaud.antoine.services.docker.model.DockerRepository;
 import spark.Request;
 import spark.Response;
-import static spark.Spark.halt;
 
 public class DockerResource {
 	private static Logger logger = LoggerFactory.getLogger(DockerResource.class);
@@ -26,23 +27,18 @@ public class DockerResource {
 	private Properties properties;
 	private Gson gson;
 
-	public DockerResource(Properties properties) {
-		setConfig(properties);
-
+	public DockerResource() {
 		GsonBuilder builder = new GsonBuilder();
 		builder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
-
 		gson = builder.create();
 	}
 
 	/**
 	 * Set config 
 	 * @param properties the config to set
-	 * @return true if config set successfully
 	 */
-	public boolean setConfig(Properties properties) {
+	public void setConfig(Properties properties) {
 		this.properties = properties;
-		return true;
 	}
 
 	/**
@@ -52,16 +48,7 @@ public class DockerResource {
 		// Check post data
 		DockerPushData dockerPushData = getData(request);
 		if (dockerPushData == null) {
-			halt(401, "error: incorrect POST data");
-			logger.error("Try to access to deployment with no parsable POST data");
-			return "";
-		}
-		// Check secure token
-		String secureKey = request.queryParams("secure-key");
-		if (!properties.getProperty("secure-key").equals(secureKey)) {
-			halt(401, "error: incorrect secure token");
-			logger.error("Try to access to deployment with key: " + secureKey);
-			return "";
+			throw new WrongRequestException("incorrect POST data", "Try to access to deployment with no parsable POST data");
 		}
 
 		DockerRepository dockerRepository = dockerPushData.getRepository();
@@ -70,9 +57,7 @@ public class DockerResource {
 
 		// Check image owner
 		if (!imageId.startsWith(properties.getProperty("docker-owner"))) {
-			halt(401, "error: incorrect access");
-			logger.error("Try to access to deployment with not valid image: " + imageId);
-			return "";
+			throw new NoAccessException("incorrect acess", "Try to access to deployment with not valid image: " + imageId);
 		}
 
 		// Process execution
