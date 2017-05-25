@@ -3,8 +3,8 @@ apply plugin: 'eclipse'
 apply plugin: 'application'
 
 mainClassName = 'fr.aumjaud.antoine.services.docker.LaunchServer'
-version = '0.0.1'
-def apiJavalibVersion = '1.1.0'
+version = '1.0.0'
+def apiJavalibVersion = '1.2.0'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -24,12 +24,16 @@ if (!apiJavalibFile.exists()) {
 
 dependencies {
 	compile name: 'api-javalib', version: apiJavalibVersion
+	//Transitive dependencies
     compile('com.sparkjava:spark-core:2.6.0') {
     	exclude group: 'org.slf4j' //old version
 	}
+    compile 'org.slf4j:slf4j-api:1.7.25'
 	compile 'com.google.code.gson:gson:2.8.0'
-    testCompile 'junit:junit:4.12'
-    compile 'ch.qos.logback:logback-classic:1.2.3' //compile for slf4j
+	compile 'org.bouncycastle:bcpkix-jdk15on:1.52'
+    //
+    runtime 'ch.qos.logback:logback-classic:1.2.3'
+	testCompile 'junit:junit:4.12'
 }
 
 processResources {

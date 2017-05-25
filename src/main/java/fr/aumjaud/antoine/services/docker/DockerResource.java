@@ -16,13 +16,13 @@ import com.google.gson.GsonBuilder;
 
 import fr.aumjaud.antoine.services.common.security.NoAccessException;
 import fr.aumjaud.antoine.services.common.security.WrongRequestException;
-import fr.aumjaud.antoine.services.docker.model.DockerPushData;
+import fr.aumjaud.antoine.services.docker.model.DockerPayload;
 import fr.aumjaud.antoine.services.docker.model.DockerRepository;
 import spark.Request;
 import spark.Response;
 
 public class DockerResource {
-	private static Logger logger = LoggerFactory.getLogger(DockerResource.class);
+	private static final Logger logger = LoggerFactory.getLogger(DockerResource.class);
 
 	private Properties properties;
 	private Gson gson;
@@ -42,16 +42,16 @@ public class DockerResource {
 	}
 
 	/**
-	 * Manage webhook from dockerhub
+	 * Manage webhook from DockerHub
 	 */
 	public String webhook(Request request, Response response) {
 		// Check post data
-		DockerPushData dockerPushData = getData(request);
-		if (dockerPushData == null) {
+		DockerPayload dockerPayload = getData(request);
+		if (dockerPayload == null) {
 			throw new WrongRequestException("incorrect POST data", "Try to access to deployment with no parsable POST data");
 		}
 
-		DockerRepository dockerRepository = dockerPushData.getRepository();
+		DockerRepository dockerRepository = dockerPayload.getRepository();
 		String imageId = dockerRepository.getRepoName();
 		String containerId = dockerRepository.getName();
 
@@ -76,8 +76,8 @@ public class DockerResource {
 		}
 	}
 
-	DockerPushData getData(Request request) {
-		return gson.fromJson(request.body(), DockerPushData.class);
+	DockerPayload getData(Request request) {
+		return gson.fromJson(request.body(), DockerPayload.class);
 	}
 
 	/**
