@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import fr.aumjaud.antoine.services.common.server.SparkImplementation;
 import fr.aumjaud.antoine.services.common.server.SparkLauncher;
+import fr.aumjaud.antoine.services.docker.requesthandler.DockerResource;
 
 public class LaunchServer {
 
