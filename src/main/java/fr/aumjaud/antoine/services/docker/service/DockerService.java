@@ -10,8 +10,15 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.aumjaud.antoine.services.common.http.HttpCode;
+import fr.aumjaud.antoine.services.common.http.HttpHelper;
+import fr.aumjaud.antoine.services.common.http.HttpResponse;
+
 public class DockerService {
+
 	private static final Logger logger = LoggerFactory.getLogger(DockerService.class);
+
+	private HttpHelper httpHelper = new HttpHelper();
 
 	private Properties properties;
 
@@ -28,11 +35,17 @@ public class DockerService {
 	 * @throws IOException if exception occures during execution
 	 */
 	public void executeWebHook(String imageId, String containerId) throws IOException {
-		execute(getCommand("stop", imageId, containerId));
-		execute(getCommand("rm", imageId, containerId));
-		execute(getCommand("rmi", imageId, containerId));
-		execute(getCommand("pull", imageId, containerId));
-		execute(getCommand("start", imageId, containerId));
+		try {
+			execute(getCommand("stop", imageId, containerId));
+			execute(getCommand("rm", imageId, containerId));
+			execute(getCommand("rmi", imageId, containerId));
+			execute(getCommand("pull", imageId, containerId));
+			execute(getCommand("start", imageId, containerId));
+			sendMessageToChatBot(containerId, "successful");
+		} catch (IOException e) {
+			sendMessageToChatBot(containerId, "failed");
+			throw e;
+		}
 	}
 
 	/**
@@ -72,7 +85,15 @@ public class DockerService {
 		} catch (IOException | InterruptedException e) {
 			throw new IOException("Can't execute process");
 		}
-
 	}
 
+	private void sendMessageToChatBot(String containerId, String status) {
+		HttpResponse httpResponse = httpHelper.postData( //
+				properties.getProperty("api-synology-chatbot.url"), //
+				"Deploy " + status + " of " + containerId, //
+				properties.getProperty("api-synology-chatbot.secure-key"));
+		if (httpResponse == null || httpResponse.getHttpCode() != HttpCode.OK) {
+			logger.warn("Can't get response form chat-bot API");
+		}
+	}
 }
