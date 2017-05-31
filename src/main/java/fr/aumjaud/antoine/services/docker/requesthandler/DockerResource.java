@@ -63,7 +63,6 @@ public class DockerResource {
 		try {
 			dockerService.executeWebHook(imageId, containerId);
 			return "ok";
-
 		} catch (RuntimeException | IOException e) {
 			logger.error(e.getMessage(), e);
 			response.status(500);
