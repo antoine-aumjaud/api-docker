@@ -4,7 +4,7 @@ apply plugin: 'application'
 
 mainClassName = 'fr.aumjaud.antoine.services.docker.LaunchServer'
 version = '1.0.0'
-def apiJavalibVersion = '1.4.0'
+def apiJavalibVersion = '1.7.0'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -23,30 +23,31 @@ if (!apiJavalibFile.exists()) {
 }
 
 dependencies {
-	compile name: 'api-javalib', version: apiJavalibVersion
-	//Transitive dependencies
+    compile name: 'api-javalib', version: apiJavalibVersion
+    //Transitive dependencies
     compile('com.sparkjava:spark-core:2.6.0') {
-    	exclude group: 'org.slf4j' //old version
-	}
+        exclude group: 'org.slf4j' //old version
+    }
     compile 'org.slf4j:slf4j-api:1.7.25'
-	compile 'com.google.code.gson:gson:2.8.0'
-	compile 'org.bouncycastle:bcpkix-jdk15on:1.52'
+    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'org.bouncycastle:bcpkix-jdk15on:1.52'
     //
     runtime 'ch.qos.logback:logback-classic:1.2.3'
-	testCompile 'junit:junit:4.12'
+    testCompile 'junit:junit:4.12'
 }
 
 processResources {
     filter org.apache.tools.ant.filters.ReplaceTokens, tokens: [
         "application.name": project.property("name"),
-        "application.version": project.property("version")
+        "application.version": project.property("version"),
+        "build.date": new Date().format('yyyy-MM-dd HH:mm:ss')
     ]
 }
 
 distributions {
     custom {
     	version = '' //remove version from path in TAR file (for docker container build)
-	}	
+    }	
 }
 startScripts { //override classpath in distribution task
     classpath += files('src/dist/lib/conf')
