@@ -90,8 +90,8 @@ public class DockerService {
 	private void sendMessageToChatBot(String containerId, String status) {
 		HttpResponse httpResponse = httpHelper.postData( //
 				properties.getProperty("api-synology-chatbot.url"), //
-				"Deploy " + status + " of " + containerId, //
-				properties.getProperty("api-synology-chatbot.secure-key"));
+				properties.getProperty("api-synology-chatbot.secure-key", //
+				"Deploy " + status + " of " + containerId));
 		if (httpResponse == null || httpResponse.getHttpCode() != HttpCode.OK) {
 			logger.warn("Can't get response form chat-bot API");
 		}
