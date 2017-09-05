@@ -95,10 +95,6 @@ public class DockerService {
 		String secureKey = properties.getProperty("api-synology-chatbot.secure-key");
 		HttpMessage httpMessage = new HttpMessageBuilder(url).setSecureKey(secureKey)
 			.setJsonMessage("{ \"message\": \"" + message + "\"}").build();
-		HttpResponse httpResponse = httpHelper.postData(httpMessage);
-
-		if (httpResponse == null || httpResponse.getHttpCode() != HttpCode.OK) {
-			logger.warn("Can't get response form chat-bot API");
-		}
+		httpHelper.postData(httpMessage);
 	}
 }
