@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import fr.aumjaud.antoine.services.common.http.HttpCode;
 import fr.aumjaud.antoine.services.common.http.HttpHelper;
+import fr.aumjaud.antoine.services.common.http.HttpMessage;
+import fr.aumjaud.antoine.services.common.http.HttpMessageBuilder;
 import fr.aumjaud.antoine.services.common.http.HttpResponse;
 
 public class DockerService {
@@ -93,7 +95,7 @@ public class DockerService {
 		String secureKey = properties.getProperty("api-synology-chatbot.secure-key");
 		HttpMessage httpMessage = new HttpMessageBuilder(url).setSecureKey(secureKey)
 			.setJsonMessage("{ \"message\": \"" + message + "\"}").build();
-		httpHelper.postData(httpMessage);
+		HttpResponse httpResponse = httpHelper.postData(httpMessage);
 
 		if (httpResponse == null || httpResponse.getHttpCode() != HttpCode.OK) {
 			logger.warn("Can't get response form chat-bot API");
