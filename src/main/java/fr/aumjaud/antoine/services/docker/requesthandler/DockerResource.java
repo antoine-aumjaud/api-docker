@@ -73,7 +73,7 @@ public class DockerResource {
 	/**
 	 * Get Docker Payload form request
 	 * @param request
-	 * @return
+	 * @return the docker payload
 	 */
 	DockerPayload getDockerPayload(Request request) {
 		return gson.fromJson(request.body(), DockerPayload.class);
