@@ -3,7 +3,7 @@ apply plugin: 'eclipse'
 apply plugin: 'application'
 
 mainClassName = 'fr.aumjaud.antoine.services.docker.LaunchServer'
-version = '1.1.1'
+version = '1.1.2'
 def apiJavalibVersion = '1.7.0'
 
 sourceCompatibility = 1.8
@@ -30,7 +30,6 @@ dependencies {
     }
     compile 'org.slf4j:slf4j-api:1.7.25'
     compile 'com.google.code.gson:gson:2.8.0'
-    compile 'org.bouncycastle:bcpkix-jdk15on:1.52'
     //
     runtime 'ch.qos.logback:logback-classic:1.2.3'
     testCompile 'junit:junit:4.12'

@@ -76,14 +76,13 @@ public class DockerService {
 	 */
 	boolean execute(String command) throws IOException {
 		logger.info("Execute command: {}", command);
-		boolean exitValue = false;
 		Process p = new ProcessBuilder().command(command.split(" ")).redirectErrorStream(true).start();
 
 		try (BufferedReader outReader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
 			logger.debug(String.join(System.lineSeparator(), outReader.lines().collect(Collectors.toList())));
-			exitValue = p.waitFor(Long.parseLong(properties.getProperty("process.timeout", "30")), TimeUnit.SECONDS);
-			logger.info("Command executed, result: {}", exitValue);
-			return exitValue;
+			boolean exited = p.waitFor(Long.parseLong(properties.getProperty("process.timeout", "30")), TimeUnit.SECONDS);
+			logger.info("Command executed, exited: {}, exit value: {}", exited, p.exitValue());
+			return exited && p.exitValue() == 0;
 		} catch (IOException | InterruptedException e) {
 			throw new IOException("Can't execute process");
 		}
