@@ -22,6 +22,11 @@ public class LaunchServer {
 			}
 
 			@Override
+			public String getApiName() {
+				return "api-docker";
+			}
+
+			@Override
 			public void setConfig(Properties appProperties) {
 				dockerResource.setConfig(appProperties);
 			}
