@@ -7,7 +7,7 @@ apply plugin: 'application'
 
 mainClassName = 'fr.aumjaud.antoine.services.docker.LaunchServer'
 version = '1.2.0'
-def apiJavalibVersion = '1.9.0'
+def apiJavalibVersion = '1.11.2'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
